@@ -1,3 +1,3 @@
 if __name__ == '__main__':
-    from test import *
+    from robotDisplay import *
     run()
