@@ -116,7 +116,7 @@ class Application:
     self.initGUI(win)
 
     # Initialize environment
-    self.robot = robot.Robot(self.canvas, 3, 'blue')
+    self.robot = robot.Robot(self.canvas, 2, 'blue')
     self.wall = robot.Wall(self.canvas, 'black')
 
     # Start GUI
