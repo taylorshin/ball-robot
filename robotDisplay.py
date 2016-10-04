@@ -1,4 +1,5 @@
 import Tkinter
+#import qlearningAgents
 import threading
 import time
 import sys
@@ -47,10 +48,15 @@ class Application:
     self.setupEpsilonButtonAndLabel(win)
     self.setUpGammaButtonAndLabel(win)
     self.setupAlphaButtonAndLabel(win)
+    self.setupBounceButton(win)
 
     # Canvas
     self.canvas = Tkinter.Canvas(root, height=500, width=800)
-    self.canvas.grid(row=2, columnspan=10)
+    self.canvas.grid(row=3, columnspan=10)
+
+  def setupBounceButton(self, win):
+    self.bounce = Tkinter.Button(win, text="BOUNCE", command=(lambda: robot.Robot.bounce()))
+    self.bounce.grid(row=2, column=2, padx=10)
 
   def setupAlphaButtonAndLabel(self, win):
       self.alpha_minus = Tkinter.Button(win,
@@ -116,7 +122,7 @@ class Application:
     self.initGUI(win)
 
     # Initialize environment
-    self.robot = robot.Robot(self.canvas, 2, 'blue')
+    self.robot = robot.Robot(self.canvas, 3, 'blue')
     self.wall = robot.Wall(self.canvas, 'black')
 
     # Start GUI
@@ -176,6 +182,8 @@ def run():
     app.wall.draw()
     root.after(10, update_gui)
   update_gui()
+
+  root.bind("<space>", app.robot.bounce())
 
   root.protocol('WM_DELETE_WINDOW', app.exit)
   try:

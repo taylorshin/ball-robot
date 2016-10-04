@@ -21,20 +21,25 @@ class Robot:
     self.speed = speed
     self.x = speed
     self.y = speed
-    self.velocity_x = 0.1
+    self.velocity_x = 0.5
     self.velocity_y = 0.5
     self.coef_restitution = 0.9
     self.time_scaling = 0.2
     self.canvas_height = self.canvas.winfo_reqheight()
     self.canvas_width = self.canvas.winfo_reqwidth()
-    self.gravity = 0.1
+    self.gravity = 0.2
+
+  def bounce(self):
+    self.velocity_y *= 2
+    print "bounce! ", "velocity: ", self.velocity_y
 
   def draw(self):
     self.canvas.move(self.id, self.x, self.y)
     pos = self.canvas.coords(self.id)
-    if pos[1] <= 0:
+    if pos[1] < 0:
       # hits floor
       self.velocity_y = -self.velocity_y * self.coef_restitution
+      self.y = 0
       #self.y = self.y * 1.1
       #self.y = abs(self.y)
     if pos[3] >= self.canvas_height:
@@ -45,6 +50,7 @@ class Robot:
     if pos[0] <= 0:
       # hits left wall
       self.velocity_x = -self.velocity_x * self.coef_restitution
+      self.y = 0
       #self.x = self.x * 1.1
       #self.x = 0
     if pos[2] >= self.canvas_width:
@@ -58,9 +64,10 @@ class Robot:
     x_old = self.x
     y_old = self.y
     self.x = self.velocity_x * self.time_scaling
+    #self.gravity = self.gravity * self.time_scaling
     self.velocity_y = self.velocity_y + self.gravity
     self.y = self.velocity_y * self.time_scaling
-    #self.canvas.create_line(x_old, y_old, self.x, self.y, fill='black')
+    self.canvas.create_line(x_old, y_old, self.x, self.y, fill='black')
 
 class Wall:
   def __init__(self, canvas, color):
