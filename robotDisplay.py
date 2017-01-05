@@ -55,8 +55,9 @@ class Application:
     self.canvas.grid(row=3, columnspan=10)
 
   def setupBounceButton(self, win):
-    self.bounce = Tkinter.Button(win, text="BOUNCE", command=(lambda: robot.Robot.bounce()))
-    self.bounce.grid(row=2, column=2, padx=10)
+      #self.bounce = Tkinter.Button(win, text="BOUNCE", command=(lambda: robot.Robot.bounce()))
+      self.bounce = Tkinter.Button(win, text="BOUNCE", command=(lambda: self.robot.bounce()))
+      self.bounce.grid(row=2, column=2, padx=10)
 
   def setupAlphaButtonAndLabel(self, win):
       self.alpha_minus = Tkinter.Button(win,
@@ -148,7 +149,7 @@ class Application:
 
 
   def run(self):
-    self.stepCount = 0 
+    self.stepCount = 0
 
     while True:
       minSleep = .01
@@ -167,7 +168,7 @@ class Application:
   def start(self):
     self.win.mainloop()
 
-"""--------------------------------------------------------------"""
+""" MAIN LOOP STUFF """
 
 def run():
   global root
@@ -176,14 +177,13 @@ def run():
   root.resizable(0, 0)
 
   app = Application(root)
-  
+
   def update_gui():
     app.robot.draw()
     app.wall.draw()
+    # this calls update_gui every 10 milliseconds without blocking Tkinter's main loop
     root.after(10, update_gui)
   update_gui()
-
-  root.bind("<space>", app.robot.bounce())
 
   root.protocol('WM_DELETE_WINDOW', app.exit)
   try:

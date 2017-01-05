@@ -1,16 +1,37 @@
+"""
+The following link helped with the animation of a bouncing ball
+https://pythongamegraphics.com/2015/04/05/animation-of-bouncing-balls/
+"""
+
 import environment
 
 class RobotEnvironment(environment.Environment):
-  def __init__(self, robot):
-    self.robot = robot
+    def __init__(self, robot):
+        self.robot = robot
+        self.state = None
+        self.nVelocityStates = 11
+        self.velocityBuckets = [-5,-4,-3,-2,-1,0,1,2,3,4,5]
+        # Reset
+        self.reset()
 
-    self.state = None
+    def getCurrentState(self):
+        return self.state
 
-  def getCurrentState(self):
-    return self.state
+    def getPossibleActions(self, state):
+        actions = list()
+        currVelocityBucket = state
+        if currVelocityBucket > 0:
+            actions.append('faster')
+        if currVelocityBucket < self.nVelocityStates - 1:
+            actions.append('slower')
+        return actions
 
-  def getPossibleActions(self, state):
-    actions = list()
+    def reset(self):
+        """
+         Resets the Environment to the initial state
+        """
+        velocityState = self.nVelocityStates/2
+        self.state = velocityState
 
 class Robot:
   def __init__(self, canvas, speed, color, wall):
@@ -23,7 +44,9 @@ class Robot:
     self.y = speed
     self.velocity_x = 0.8
     self.velocity_y = 0.6
+    # Proportion of elastic energy recovered after each bounce
     self.coef_restitution = 0.9
+    # This determines the size of differential steps when calculating changes in position
     self.time_scaling = 0.2
     self.canvas_height = self.canvas.winfo_reqheight()
     self.canvas_width = self.canvas.winfo_reqwidth()
@@ -33,6 +56,9 @@ class Robot:
   def bounce(self):
     self.velocity_y *= 2
     print "bounce! ", "velocity: ", self.velocity_y
+
+  #def detectWallCollision(self):
+    # TODO
 
   def draw(self):
     self.canvas.move(self.id, self.x, self.y)
@@ -50,10 +76,11 @@ class Robot:
       self.velocity_x = -self.velocity_x * self.coef_restitution
     # Hits right boundary or hits the wall
     if pos[2] >= self.canvas_width or pos[2] >= self.canvas.bbox(self.wall.id)[0]:
+      # bbox returns (x1,y1,x2,y2) = bounding box where top left corner is (x1,y1)
+      # and bottom right corner is (x2,y2)
       self.velocity_x = -self.velocity_x * self.coef_restitution
 
     # Diff equation
-    #self.y += self.gravity
     self.x = self.velocity_x * self.time_scaling
     #self.gravity = self.gravity * self.time_scaling
     self.velocity_y = self.velocity_y + self.gravity
