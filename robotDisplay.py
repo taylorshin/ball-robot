@@ -55,7 +55,6 @@ class Application:
     self.canvas.grid(row=3, columnspan=10)
 
   def setupBounceButton(self, win):
-      #self.bounce = Tkinter.Button(win, text="BOUNCE", command=(lambda: robot.Robot.bounce()))
       self.bounce = Tkinter.Button(win, text="BOUNCE", command=(lambda: self.robot.bounce()))
       self.bounce.grid(row=2, column=2, padx=10)
 
