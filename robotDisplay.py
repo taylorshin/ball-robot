@@ -123,8 +123,8 @@ class Application:
 
     # Initialize environment
     #self.wall = robot.Wall(self.canvas, 'black')
-    self.robot = robot.Robot(self.canvas, 3, 'blue')
-    self.basket = robot.Basket(self.canvas, 700, 100, 750, 150, 'red')
+    self.robot = robot.Robot(self.canvas, 10, 10, 50, 50, 'blue')
+    self.basket = robot.Basket(self.canvas, self.canvas.winfo_reqwidth() - 5 - 50, 100, self.canvas.winfo_reqwidth() - 5, 150, 'red')
 
     # Start GUI
     self.running = True
