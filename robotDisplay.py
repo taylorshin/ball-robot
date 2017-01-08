@@ -122,8 +122,9 @@ class Application:
     self.initGUI(win)
 
     # Initialize environment
-    self.wall = robot.Wall(self.canvas, 'black')
-    self.robot = robot.Robot(self.canvas, 3, 'blue', self.wall)
+    #self.wall = robot.Wall(self.canvas, 'black')
+    self.robot = robot.Robot(self.canvas, 3, 'blue')
+    self.basket = robot.Basket(self.canvas, 700, 100, 750, 150, 'red')
 
     # Start GUI
     self.running = True
@@ -179,7 +180,8 @@ def run():
 
   def update_gui():
     app.robot.draw()
-    app.wall.draw()
+    #app.wall.draw()
+    app.basket.draw()
     # this calls update_gui every 10 milliseconds without blocking Tkinter's main loop
     root.after(10, update_gui)
   update_gui()
