@@ -1,5 +1,5 @@
 """
-The following link helped with the animation of a bouncing ball
+The following link helped with the animation of a bouncing ball in python
 https://pythongamegraphics.com/2015/04/05/animation-of-bouncing-balls/
 """
 
@@ -11,10 +11,15 @@ class RobotEnvironment(environment.Environment):
         self.state = None
         self.nVelXStates = 10
         self.nVelYStates = 10
-        self.velXBuckets = [i + 1 for i in range(10)]
-        self.velYBuckets = [i + 1 for i in range(10)]
+        self.velXBuckets = [i for i in range(1, 11)]
+        self.velYBuckets = []
+        for i in range(-5, 0):
+            self.velYBuckets.append(i)
+        for i in range(1, 6):
+            self.velYBuckets.append(i)
         # Reset
         self.reset()
+        print 'OG VelX: ', self.robot.velX, ', OG VelY: ', self.robot.velY
 
     def getCurrentState(self):
         return self.state
@@ -22,11 +27,12 @@ class RobotEnvironment(environment.Environment):
     def getPossibleActions(self, state):
         actions = list()
 
+        # Maybe actions should differ based on +/- distance from basket
         currVelXBucket, currVelYBucket = state
-        if currVelXBucket > 0: actions.append('velX-down')
-        if currVelXBucket < self.nVelXStates - 1: actions.append('velX-up')
-        if currVelYBucket > 0: actions.append('velY-down')
-        if currVelYBucket < self.nVelXStates - 1: actions.append('velY-up')
+        if currVelXBucket > 0: actions.append('velX-up')
+        if currVelXBucket < self.nVelXStates - 1: actions.append('velX-down')
+        if currVelYBucket > 0: actions.append('velY-up')
+        if currVelYBucket < self.nVelXStates - 1: actions.append('velY-down')
 
         return actions
 
@@ -68,7 +74,7 @@ class RobotEnvironment(environment.Environment):
         velXState = self.nVelXStates / 2
         velYState = self.nVelYStates / 2
         self.state = velXState, velYState
-        #self.canvas.move(self.robot.id, 100, 100)
+        #self.robot.resetPosition()
 
 
 class Robot:
@@ -115,14 +121,13 @@ class Robot:
         self.hitWall = hit
 
     def resetPosition(self):
-        tempVelX = self.velX
-        tempVelY = self.velY
-        self.velX = 0
-        self.velY = 0
-        #self.canvas.move(self.id, 0, 0)
+        #tempVelX = self.velX
+        #tempVelY = self.velY
+        #self.velX = 0
+        #self.velY = 0
         self.canvas.coords(self.id, 110, 110, 150, 150)
-        self.velX = tempVelX
-        self.velY = tempVelY
+        #self.velX = tempVelX
+        #self.velY = tempVelY
 
     def draw(self):
         self.canvas.move(self.id, self.x, self.y)
