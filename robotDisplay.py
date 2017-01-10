@@ -189,6 +189,10 @@ class Application:
             self.stepsToSkip = 0
             if self.robot.getHitWall():
                 self.step()
+                print 'new VelX: ', self.robot.velX, ', new VelY: ', self.robot.velY
+                self.robot.resetPosition()
+                #self.robot = robot.Robot(self.canvas, 10, 10, 50, 50, 'blue', self.basket)
+                self.robot.setHitWall(False)
         self.learner.stopEpisode()
 
     def start(self):

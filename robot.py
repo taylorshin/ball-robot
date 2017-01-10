@@ -35,6 +35,8 @@ class RobotEnvironment(environment.Environment):
 
         oldY = self.robot.getDistanceToBasket()
 
+        print 'Action: ', action
+
         velXBucket, velYBucket = self.state
         if action == 'velX-up':
             newVelX = self.velXBuckets[velXBucket + 1]
@@ -67,7 +69,6 @@ class RobotEnvironment(environment.Environment):
         velYState = self.nVelYStates / 2
         self.state = velXState, velYState
         #self.canvas.move(self.robot.id, 100, 100)
-        print 'resetting'
 
 
 class Robot:
@@ -109,6 +110,19 @@ class Robot:
 
     def getHitWall(self):
         return self.hitWall
+
+    def setHitWall(self, hit):
+        self.hitWall = hit
+
+    def resetPosition(self):
+        tempVelX = self.velX
+        tempVelY = self.velY
+        self.velX = 0
+        self.velY = 0
+        #self.canvas.move(self.id, 0, 0)
+        self.canvas.coords(self.id, 110, 110, 150, 150)
+        self.velX = tempVelX
+        self.velY = tempVelY
 
     def draw(self):
         self.canvas.move(self.id, self.x, self.y)
