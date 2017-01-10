@@ -9,8 +9,8 @@ class RobotEnvironment(environment.Environment):
     def __init__(self, robot):
         self.robot = robot
         self.state = None
-        self.nVelXStates = 11
-        self.nVelYStates = 11
+        self.nVelXStates = 10
+        self.nVelYStates = 10
         self.velXBuckets = [i + 1 for i in range(10)]
         self.velYBuckets = [i + 1 for i in range(10)]
         # Reset
@@ -32,7 +32,9 @@ class RobotEnvironment(environment.Environment):
 
     def doAction(self, action):
         nextState, reward =  None, None
-        #oldY = get Y value of ball once it hits the right wall
+
+        oldY = self.robot.getDistanceToBasket()
+
         velXBucket, velYBucket = self.state
         if action == 'velX-up':
             newVelX = self.velXBuckets[velXBucket + 1]
@@ -51,22 +53,25 @@ class RobotEnvironment(environment.Environment):
             self.robot.velY = newVelY
             nextState = (velXBucket, velYBucket - 1)
 
-        #newX,newY = self.crawlingRobot.getRobotPosition()
+        newY = self.robot.getDistanceToBasket()
 
         # a simple reward function
-        #reward = newX - oldX
+        reward = newY - oldY
 
         self.state = nextState
         return nextState, reward
 
     def reset(self):
         # Resets the Environment to the initial state
-        velState = self.nVelStates/2
-        self.state = velState
+        velXState = self.nVelXStates / 2
+        velYState = self.nVelYStates / 2
+        self.state = velXState, velYState
+        #self.canvas.move(self.robot.id, 100, 100)
+        print 'resetting'
 
 
 class Robot:
-    def __init__(self, canvas, x0, y0, x1, y1, color):
+    def __init__(self, canvas, x0, y0, x1, y1, color, basket):
         self.canvas = canvas
         self.id = canvas.create_oval(x0, y0, x1, y1, fill=color)
         # Sets x,y position of object
@@ -77,7 +82,7 @@ class Robot:
         self.x = self.speed
         self.y = self.speed
         self.velX = 5.0
-        self.velY = 0.8
+        self.velY = 5.0
         # Proportion of elastic energy recovered after each bounce
         self.coef_restitution = 0.9
         # This determines the size of differential steps when calculating changes in position
@@ -85,12 +90,25 @@ class Robot:
         self.canvas_height = self.canvas.winfo_reqheight()
         self.canvas_width = self.canvas.winfo_reqwidth()
         self.gravity = 0.2
+        # Set up basket
+        self.basket = basket
+        # Not sure if this should be initialized to None
+        # There would be an edge case at the beginning where it would subtract an int with None
+        self.distToBasket = -1000
+        self.hitWall = False
 
     def bounce(self):
-        #self.velY *= 1.5
+        self.velY *= 1.5
         #print "bounce! ", "velocity: ", self.velY
         print "x: ", self.pos[2], ", y: ", self.pos[3]
         print "xbox: ", self.canvas.bbox(self.id)[2], ", ybox: ", self.canvas.bbox(self.id)[3]
+
+    # Returns the distance from the ball to the basket
+    def getDistanceToBasket(self):
+        return self.distToBasket
+
+    def getHitWall(self):
+        return self.hitWall
 
     def draw(self):
         self.canvas.move(self.id, self.x, self.y)
@@ -107,6 +125,8 @@ class Robot:
             # bbox returns (x1,y1,x2,y2) = bounding box where top left corner is (x1,y1)
             # and bottom right corner is (x2,y2)
             self.velX = -self.velX * self.coef_restitution
+            self.distToBasket = abs(self.canvas.bbox(self.basket.id)[3] - self.canvas.bbox(self.id)[3])
+            self.hitWall = True
         # Hits floor
         if self.pos[3] >= self.canvas_height:
             self.velY = -self.velY * self.coef_restitution
