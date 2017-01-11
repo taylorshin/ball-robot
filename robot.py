@@ -169,7 +169,7 @@ class Robot:
 
         # Draw line to show ball path
         self.pos = self.canvas.coords(self.id)
-        self.canvas.create_line(oldX, oldY, self.pos[0], self.pos[1], fill='black'
+        self.canvas.create_line(oldX, oldY, self.pos[0], self.pos[1], fill='black')
 
 """
 class Wall:
