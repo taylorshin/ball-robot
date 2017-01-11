@@ -126,7 +126,7 @@ class Application:
         # Initialize environment
         #self.wall = robot.Wall(self.canvas, 'black')
         self.basket = robot.Basket(self.canvas, self.canvas.winfo_reqwidth() - 5 - 50, 100, self.canvas.winfo_reqwidth() - 5, 150, 'red')
-        self.robot = robot.Robot(self.canvas, 10, 10, 50, 50, 'blue', self.basket)
+        self.robot = robot.Robot(self.canvas, 110, 110, 150, 150, 'blue', self.basket)
         self.robotEnvironment = robot.RobotEnvironment(self.robot)
 
         # Init Agent

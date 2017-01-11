@@ -81,8 +81,12 @@ class Robot:
     def __init__(self, canvas, x0, y0, x1, y1, color, basket):
         self.canvas = canvas
         self.id = canvas.create_oval(x0, y0, x1, y1, fill=color)
+        self.start_x0 = x0
+        self.start_y0 = y0
+        self.start_x1 = x1
+        self.start_y1 = y1
         # Sets x,y position of object
-        self.canvas.move(self.id, 100, 100)
+        #self.canvas.move(self.id, 100, 100)
         # Not sure what speed does...............lol
         # Seems like speed of 3 is good but 5 is not
         self.speed = 3
@@ -103,6 +107,7 @@ class Robot:
         # There would be an edge case at the beginning where it would subtract an int with None
         self.distToBasket = -1000
         self.hitWall = False
+        self.line = None
 
     def bounce(self):
         self.velY *= 1.5
@@ -121,13 +126,8 @@ class Robot:
         self.hitWall = hit
 
     def resetPosition(self):
-        #tempVelX = self.velX
-        #tempVelY = self.velY
-        #self.velX = 0
-        #self.velY = 0
-        self.canvas.coords(self.id, 110, 110, 150, 150)
-        #self.velX = tempVelX
-        #self.velY = tempVelY
+        self.canvas.coords(self.id, self.start_x0, self.start_y0, self.start_x1, self.start_y1)
+        self.canvas.delete(self.line)
 
     def draw(self):
         # Original skeleton code had move at the beginning of this function
@@ -169,7 +169,7 @@ class Robot:
 
         # Draw line to show ball path
         self.pos = self.canvas.coords(self.id)
-        self.canvas.create_line(oldX, oldY, self.pos[0], self.pos[1], fill='black')
+        self.line = self.canvas.create_line(oldX, oldY, self.pos[0], self.pos[1], fill='black')
 
 """
 class Wall:
