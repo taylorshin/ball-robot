@@ -130,8 +130,13 @@ class Robot:
         #self.velY = tempVelY
 
     def draw(self):
-        self.canvas.move(self.id, self.x, self.y)
+        # Original skeleton code had move at the beginning of this function
+        #self.canvas.move(self.id, self.x, self.y)
         self.pos = self.canvas.coords(self.id)
+
+        oldX = self.pos[0]
+        oldY = self.pos[1]
+
         # Hits left boundary
         if self.pos[0] <= 0:
             self.velX = -self.velX * self.coef_restitution
@@ -150,13 +155,21 @@ class Robot:
         if self.pos[3] >= self.canvas_height:
             self.velY = -self.velY * self.coef_restitution
             # If ball goes below floor automatically set its location to 0
-            self.y = 0
+            #self.y = 0
+            self.canvas.move(self.id, 0, -5)
 
         # Diff equation
         self.x = self.velX * self.time_scaling
         #self.gravity = self.gravity * self.time_scaling
         self.velY = self.velY + self.gravity
         self.y = self.velY * self.time_scaling
+
+        # Move the ball after calculating the physics
+        self.canvas.move(self.id, self.x, self.y)
+
+        # Draw line to show ball path
+        self.pos = self.canvas.coords(self.id)
+        self.canvas.create_line(oldX, oldY, self.pos[0], self.pos[1], fill='black'
 
 """
 class Wall:
