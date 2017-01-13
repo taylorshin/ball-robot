@@ -48,17 +48,10 @@ class Application:
         self.setupEpsilonButtonAndLabel(win)
         self.setUpGammaButtonAndLabel(win)
         self.setupAlphaButtonAndLabel(win)
-        #self.setupBounceButton(win)
 
         # Canvas
         self.canvas = Tkinter.Canvas(root, height=500, width=800)
         self.canvas.grid(row=3, columnspan=10)
-
-    """
-    def setupBounceButton(self, win):
-        self.bounce = Tkinter.Button(win, text="BOUNCE", command=(lambda: self.robot.bounce()))
-        self.bounce.grid(row=2, column=2, padx=10)
-    """
 
     def setupAlphaButtonAndLabel(self, win):
         self.alpha_minus = Tkinter.Button(win,
@@ -124,9 +117,9 @@ class Application:
         self.initGUI(win)
 
         # Initialize environment
-        #self.wall = robot.Wall(self.canvas, 'black')
-        self.basket = robot.Basket(self.canvas, self.canvas.winfo_reqwidth() - 5 - 50, 100, self.canvas.winfo_reqwidth() - 5, 150, 'red')
-        self.robot = robot.Robot(self.canvas, 110, 110, 150, 150, 'blue', self.basket)
+        self.basket = robot.Basket(self.canvas, self.canvas.winfo_reqwidth() - 5 - 50, 100, self.canvas.winfo_reqwidth() - 5, 150, 'blue')
+        self.basketPole = self.canvas.create_rectangle(self.canvas.winfo_reqwidth() - 10, 150, self.canvas.winfo_reqwidth(), self.canvas.winfo_reqheight(), fill='black')
+        self.robot = robot.Robot(self.canvas, 10, 150, 50, 190, 'red', self.basket)
         self.robotEnvironment = robot.RobotEnvironment(self.robot)
 
         # Init Agent
@@ -159,7 +152,6 @@ class Application:
         sys.exit(0)
 
     def step(self):
-        #self.stepCount += 1
         self.stepCount += 1
         state = self.robotEnvironment.getCurrentState()
         actions = self.robotEnvironment.getPossibleActions(state)
@@ -193,7 +185,6 @@ class Application:
                 self.step()
                 print 'new VelX: ', self.robot.velX, ', new VelY: ', self.robot.velY
                 self.robot.resetPosition()
-                #self.robot = robot.Robot(self.canvas, 10, 10, 50, 50, 'blue', self.basket)
                 self.robot.setHitWall(False)
         self.learner.stopEpisode()
 
@@ -205,14 +196,13 @@ class Application:
 def run():
     global root
     root = Tkinter.Tk()
-    root.title('Something cool')
+    root.title('Ball Robot')
     root.resizable(0, 0)
 
     app = Application(root)
 
     def update_gui():
         app.robot.draw()
-        #app.wall.draw()
         app.basket.draw()
         # this calls update_gui every 10 milliseconds without blocking Tkinter's main loop
         root.after(10, update_gui)

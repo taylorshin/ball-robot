@@ -1,6 +1,8 @@
 """
 The following link helped with the animation of a bouncing ball in python
 https://pythongamegraphics.com/2015/04/05/animation-of-bouncing-balls/
+(x0, y0, x1, y1) are parameters for Tkinter object position
+(x0, y0) = top left point; (x1, y1) = bottom right point
 """
 
 import environment
@@ -29,10 +31,18 @@ class RobotEnvironment(environment.Environment):
 
         # Maybe actions should differ based on +/- distance from basket
         currVelXBucket, currVelYBucket = state
-        if currVelXBucket > 0: actions.append('velX-up')
-        if currVelXBucket < self.nVelXStates - 1: actions.append('velX-down')
-        if currVelYBucket > 0: actions.append('velY-up')
-        if currVelYBucket < self.nVelXStates - 1: actions.append('velY-down')
+        if currVelXBucket > 0:
+            actions.append('velX-up')
+            #print 'possible action: velX-up'
+        if currVelXBucket < self.nVelXStates - 1:
+            actions.append('velX-down')
+            #print 'possible action: velX-down'
+        if currVelYBucket > 0:
+            actions.append('velY-up')
+            #print 'possible action: velY-up'
+        if currVelYBucket < self.nVelXStates - 1:
+            actions.append('velY-down')
+            #print 'possible action: velY-down'
 
         return actions
 
@@ -74,7 +84,7 @@ class RobotEnvironment(environment.Environment):
         velXState = self.nVelXStates / 2
         velYState = self.nVelYStates / 2
         self.state = velXState, velYState
-        #self.robot.resetPosition()
+        self.robot.resetPosition()
 
 
 class Robot:
@@ -107,13 +117,9 @@ class Robot:
         # There would be an edge case at the beginning where it would subtract an int with None
         self.distToBasket = -1000
         self.hitWall = False
+        # Stores the many line id's when drawing the ball path
+        self.lines = []
         self.line = None
-
-    def bounce(self):
-        self.velY *= 1.5
-        #print "bounce! ", "velocity: ", self.velY
-        print "x: ", self.pos[2], ", y: ", self.pos[3]
-        print "xbox: ", self.canvas.bbox(self.id)[2], ", ybox: ", self.canvas.bbox(self.id)[3]
 
     # Returns the distance from the ball to the basket
     def getDistanceToBasket(self):
@@ -127,11 +133,16 @@ class Robot:
 
     def resetPosition(self):
         self.canvas.coords(self.id, self.start_x0, self.start_y0, self.start_x1, self.start_y1)
-        self.canvas.delete(self.line)
+        # Delete the ball path lines from the canvas
+        for line in self.lines:
+            self.canvas.delete(line)
+        # Clear lines list
+        del self.lines[:]
 
     def draw(self):
         # Original skeleton code had move at the beginning of this function
-        #self.canvas.move(self.id, self.x, self.y)
+        self.canvas.move(self.id, self.x, self.y)
+
         self.pos = self.canvas.coords(self.id)
 
         oldX = self.pos[0]
@@ -140,22 +151,23 @@ class Robot:
         # Hits left boundary
         if self.pos[0] <= 0:
             self.velX = -self.velX * self.coef_restitution
+            self.canvas.move(self.id, 5, 0)
         # Ball hits ceiling
         if self.pos[1] <= 0:
             self.velY = -self.velY * self.coef_restitution
+            self.canvas.move(self.id, 0, 5)
         # Hits right boundary or hits the wall
-        #if pos[2] >= self.canvas_width or pos[2] >= self.canvas.bbox(self.wall.id)[0]:
         if self.pos[2] >= self.canvas_width:
             # bbox returns (x1,y1,x2,y2) = bounding box where top left corner is (x1,y1)
             # and bottom right corner is (x2,y2)
             self.velX = -self.velX * self.coef_restitution
             self.distToBasket = abs(self.canvas.bbox(self.basket.id)[3] - self.canvas.bbox(self.id)[3])
             self.hitWall = True
+            self.canvas.move(self.id, -5, 0)
         # Hits floor
         if self.pos[3] >= self.canvas_height:
             self.velY = -self.velY * self.coef_restitution
-            # If ball goes below floor automatically set its location to 0
-            #self.y = 0
+            # If ball goes below floor automatically offset its position above the ground
             self.canvas.move(self.id, 0, -5)
 
         # Diff equation
@@ -170,19 +182,8 @@ class Robot:
         # Draw line to show ball path
         self.pos = self.canvas.coords(self.id)
         self.line = self.canvas.create_line(oldX, oldY, self.pos[0], self.pos[1], fill='black')
+        self.lines.append(self.line)
 
-"""
-class Wall:
-    def __init__(self, canvas, color):
-        self.canvas = canvas
-        # (x0, y0, x1, y1) are parameters for create_rectangle
-        # (x0, y0) = top left point; (x1, y1) = bottom right point
-        self.id = canvas.create_rectangle(400, 150, 425, 550, fill=color)
-        #self.canvas.move(self.id, 200, 300)
-
-    def draw(self):
-        self.canvas.move(self.id, 0, 0)
-"""
 
 class Basket:
     def __init__(self, canvas, x0, y0, x1, y1, color):
