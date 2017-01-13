@@ -1,4 +1,7 @@
 """
+This project is based on the crawler robot project from the Intro to AI course
+at UC Berkeley (http://ai.berkeley.edu).
+
 The following link helped with the animation of a bouncing ball in python
 https://pythongamegraphics.com/2015/04/05/animation-of-bouncing-balls/
 (x0, y0, x1, y1) are parameters for Tkinter object position
@@ -95,8 +98,6 @@ class Robot:
         self.start_y0 = y0
         self.start_x1 = x1
         self.start_y1 = y1
-        # Sets x,y position of object
-        #self.canvas.move(self.id, 100, 100)
         # Not sure what speed does...............lol
         # Seems like speed of 3 is good but 5 is not
         self.speed = 3
@@ -140,11 +141,10 @@ class Robot:
         del self.lines[:]
 
     def draw(self):
-        # Original skeleton code had move at the beginning of this function
+        # Move at the top of this function to speed up the animation
         self.canvas.move(self.id, self.x, self.y)
 
         self.pos = self.canvas.coords(self.id)
-
         oldX = self.pos[0]
         oldY = self.pos[1]
 
